@@ -17,8 +17,8 @@ body{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 #canvas{
-    width: 50rem;
-    height: 30rem;
+    width: 800px;
+    height: 500px;
     border: 8px rgb(164, 164, 164) solid;
     background-color: white;
     border-radius: 20px;
