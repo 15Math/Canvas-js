@@ -1,0 +1,26 @@
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    background-color: #4c0eb0;
+}
+#tools{
+    height: 7rem;
+    width: 50rem;
+    border: 8px rgb(164, 164, 164) solid;
+    background-color: white;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+#title {
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+#canvas{
+    width: 50rem;
+    height: 30rem;
+    border: 8px rgb(164, 164, 164) solid;
+    background-color: white;
+    border-radius: 20px;
+    padding: 0px;
+}
