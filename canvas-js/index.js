@@ -11,13 +11,27 @@ document.addEventListener('DOMContentLoaded', ()=>{
         position:{x: 0, y:0},
         lastPosition: null
     }
-    ctx.lineWidth = 7;
+    let lineWidth = 7;
+    let color = 'black';
+
+    ctx.lineWidth = lineWidth;
+    ctx.fillStyle = color;
+    ctx.lineJoin = 'round';
 
     const draw = (line) => {
+
+        //Desenha circulo que parece uma linha para suavisar a linha verdadeira
+        ctx.beginPath();
+        ctx.arc(line.inicial.x, line.inicial.y, lineWidth/2.5 , 0 , 2* Math.PI)
+        ctx.fill();
+        ctx.closePath();
+
+        //desenha linha
         ctx.beginPath();
         ctx.moveTo(line.inicial.x, line.inicial.y);
         ctx.lineTo(line.final.x, line.final.y);
         ctx.stroke();
+        ctx.closePath();
     }
 
     canvas.onmousedown = ()=>{brush.active = true};
@@ -30,12 +44,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     };
 
     const cicle = ()=>{
-        if(brush.active && brush.move && brush.lastPosition){
+        if(brush.active && brush.lastPosition){
             draw({inicial:{x:brush.lastPosition.x,y:brush.lastPosition.y}, final:{x:brush.position.x,y:brush.position.y}});
             brush.move = false;
         }
         brush.lastPosition = {x:brush.position.x,y:brush.position.y};
-        setInterval(cicle,1);
+        requestAnimationFrame(cicle);
     }
-    cicle();
+    requestAnimationFrame(cicle);
 })
