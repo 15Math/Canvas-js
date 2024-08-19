@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     };
 
     const cicle = ()=>{
-        if(brush.active && brush.move && brush.lastPosition){
+        if(brush.active  && brush.lastPosition){
             draw({inicial:{x:brush.lastPosition.x,y:brush.lastPosition.y}, final:{x:brush.position.x,y:brush.position.y}});
             brush.move = false;
         }
