@@ -8,28 +8,58 @@
 </head>
 <body>
 
-        <h1 id="title">Canvas.js</h1>
-        <canvas id="canvas"></canvas>
-        <div id="tools">
-            <div id="color-picker">
-                <input type="color"></input>
-                <div id="previous-colors">
-                    <div>
-                        <button class="prev-color" id="prev-1" data-color = ""></button>
-                        <button class="prev-color" id="prev-2" data-color = ""></button>
-                        <button class="prev-color" id="prev-3" data-color = ""></button>
-                        <button class="prev-color" id="prev-4" data-color = ""></button>
-                        <button class="prev-color" id="prev-5" data-color = ""></button>
+        <h1 id="title">Canvas<span>.js</span></h1>
+        <div>
+            <div id="work-area">
+                <div id="brush-ajustments">
+                    <div class="slider">
+                        <span id="big"></span>
+                        <input type="range" id="size" orient="vertical" min="1" max="100" value="20"></input>
+                        <span id="small"></span>
                     </div>
-                    <div>
-                        <button class="prev-color" id="prev-6" data-color = ""></button>
-                        <button class="prev-color" id="prev-7" data-color = ""></button>
-                        <button class="prev-color" id="prev-8" data-color = ""></button>
-                        <button class="prev-color" id="prev-9" data-color = ""></button>
-                        <button class="prev-color" id="prev-10" data-color = ""></button>
+                    <!-- Ainda não consegui resolver o problema da opacidade ;-;
+                    <!-- <div class="slider">
+                        <span></span>
+                        <input type="range" id="opacity" orient="vertical" min="1" max="255" value="255"></input>
+                        <span id="transparent"></span>
+                    </div> -->
+                </div>
+                <div>
+                    <canvas id="canvas"></canvas>
+                    <div id="tools-area">
+                        <div id="color-galery">
+                            <input type="color"></input>
+                            <div id="previous-colors">
+                                <div>
+                                    <button class="prev-color" id="prev-1" data-color = ""></button>
+                                    <button class="prev-color" id="prev-2" data-color = ""></button>
+                                    <button class="prev-color" id="prev-3" data-color = ""></button>
+                                    <button class="prev-color" id="prev-4" data-color = ""></button>
+                                    <button class="prev-color" id="prev-5" data-color = ""></button>
+                                </div>
+                                <div>
+                                    <button class="prev-color" id="prev-6" data-color = ""></button>
+                                    <button class="prev-color" id="prev-7" data-color = ""></button>
+                                    <button class="prev-color" id="prev-8" data-color = ""></button>
+                                    <button class="prev-color" id="prev-9" data-color = ""></button>
+                                    <button class="prev-color" id="prev-10" data-color = ""></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tools">
+                            <div class="tool">
+                                <img src="assets/pincel.png" id="brush" data-value = "active" alt="">
+                            </div>
+                            <div class="tool">
+                                <img src="assets/borracha.png" id="eraser" data-value = "inactive" alt="">
+                            </div>
+                            <div class="tool">
+                                <img src="assets/balde-de-tinta.png" id="bucket" data-value = "inactive" alt="">
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+        </div>
         </div>
        
       

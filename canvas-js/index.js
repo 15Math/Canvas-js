@@ -9,32 +9,37 @@ document.addEventListener('DOMContentLoaded', ()=>{
     //Informações do pincel
     let brush = {
         active: false,
+        move: false,
         position:{x: 0, y:0},
         lastPosition: null,
-        color: 'black',
-        lineWidth: 7
+        color: "#000000",
+        lineWidth: 30
     }
-    let lineWidth = brush.lineWidth;
 
 
-    ctx.lineWidth = lineWidth;
-    ctx.lineJoin = 'round';
 
     //Desenha a linha
     const draw = (line) => {
         
-        //Desenha circulo que parece uma linha para suavisar a linha verdadeira
-        ctx.beginPath();
-        ctx.arc(line.inicial.x, line.inicial.y, lineWidth/2.5 , 0 , 2* Math.PI)
-        ctx.fillStyle = brush.color;
-        ctx.fill();
-        ctx.closePath();
+
+        lineWidth = brush.lineWidth;
+        ctx.lineWidth = lineWidth;
+        
+        // //Desenha circulo que parece uma linha para suavisar a linha verdadeira
+        // ctx.beginPath();
+        // ctx.arc(line.inicial.x, line.inicial.y, lineWidth/2 , 0 , 2* Math.PI)
+        // ctx.fillStyle = brush.color;
+        // ctx.fill();
+     
 
         //desenha linha
         ctx.beginPath();
         ctx.moveTo(line.inicial.x, line.inicial.y);
         ctx.lineTo(line.final.x, line.final.y);
         ctx.strokeStyle = brush.color;
+        ctx.fillOpacity = .0;
+        ctx.lineCap = "round";
+        ctx.lineJoin = 'round';
         ctx.stroke();
         ctx.closePath();
     }
@@ -54,11 +59,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
     canvas.onmousemove = (event)=>{
         brush.position.x = event.offsetX;
         brush.position.y = event.offsetY;
+        brush.move = true
     };
 
     //ciclo que captura o momento de chamar a funçao de desenho
     const cicle = ()=>{
-        if(brush.active && brush.lastPosition){
+        if(brush.active && brush.lastPosition && brush.move){
             draw({inicial:{x:brush.lastPosition.x,y:brush.lastPosition.y}, final:{x:brush.position.x,y:brush.position.y}});
             brush.move = false;
         }
@@ -71,8 +77,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     //Altera o valor color do brush
     const colorPicker = document.querySelector('input[type=color]');
     colorPicker.onchange = ()=>{
-        brush.color = colorPicker.value
         saveColorFlag = true;
+        brush.color = colorPicker.value
     }
     
     const previousColorsBtns = [...document.querySelectorAll('.prev-color')];
@@ -90,10 +96,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
             previousColorsBtns[index].style.backgroundColor = color;
             previousColorsBtns[index].style.cursor = "pointer";
             previousColorsBtns[index].dataset.color = color; 
-        } )
-            
-       
+            previousColorsBtns[index].onclick = ()=>{
+                brush.color = color;
+                colorPicker.value = color;
+            }
+        } )  
     }
 
-   
+    const sizeSlider = document.getElementById('size');
+    sizeSlider.onchange = () =>{
+        brush.lineWidth = sizeSlider.value;
+    }
+
+    // const opacitySlider = document.getElementById('opacity');
+    // opacitySlider.onchange = () =>{
+    //     if(brush.color.length > 7){
+    //         brush.color = brush.color.slice(0,7);
+    //     }
+    //         brush.color += Number(opacitySlider.value).toString(16);
+    // }
+
+    const brushTool = document.getElementById('brush');
+    const eraserTool = document.getElementById('eraser');
+    const bucketTool = document.getElementById('bucket')
+
 })
+

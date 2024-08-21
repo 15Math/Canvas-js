@@ -12,6 +12,18 @@ body{
     align-items: center; 
     background-color: #6127be;
 }
+body > div{
+    width: 100wh;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+#work-area{
+    display: flex;
+    position: relative;
+}
 
 #title {
     width: 100%;
@@ -22,6 +34,9 @@ body{
     margin-bottom: 20px;
     text-align: center;
 }
+#title > span{
+    color: #f9ca24;
+}
 #canvas{
     width: 800px;
     height: 500px;
@@ -29,9 +44,9 @@ body{
     border-radius: 20px;
 }
 
-#tools{
-    height: 5rem;
-    width: 50rem;
+#tools-area{
+    height: 80px;
+    width: 100%;
     background-color: rgba(29, 1, 43, 0.363);
     border-radius: 20px;
     margin-top: 20px;
@@ -57,10 +72,17 @@ input[type="color"]::-webkit-color-swatch {
     
 }
 
-#color-picker{
+input[type="color"]::-webkit-color-swatch:hover {
+    border: 3px solid #7a00ff;
+}
+
+#color-galery{
     display: flex;
     align-items: center;
     gap:10px;
+    border-right:3px solid #f9ca24;
+    padding-right: 20px;
+    margin-right:20px;
 }
 #previous-colors{
     display: flex;
@@ -70,14 +92,129 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 #previous-colors > div{
-    height: 15px;
+    height: 20px;
     display: flex;
     gap: 3px;
 }
 .prev-color{
-    width: 15px;
-    height: 100%;
-    background-color: #6127be;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff56;
     border: 2px solid #6127be;
     border-radius: 3px;
+}
+#brush-ajustments {
+    height: 82.5%;
+    width: 80px;
+    position: absolute;
+    background-color: rgba(29, 1, 43, 0.363);
+    border-radius: 20px;
+    right: calc(100% + 20px); /* Ajuste o posicionamento do contêiner */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.slider{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap:10px;
+}
+.slider span{
+    height: 20px;
+    width: 20px;
+    border:3px solid #ffffff;
+    background-color: #6127be;
+    border-radius: 100%;
+}
+ 
+/* .slider #transparent {
+    background-color: transparent;
+} */
+.slider #big{
+    height: 30px;
+    width: 30px;
+}
+.slider #small{
+    height: 10px;
+    width: 10px;
+}
+
+
+
+.slider [type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 16px;
+    height: 350px;
+    border-radius: 20px;
+    background: #ffffff;
+
+    outline: none;
+    padding: 0;
+    margin: 0;
+}
+
+.slider [type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #6127be;
+    border: #f9ca24 5px solid;
+    cursor: pointer;
+    -webkit-transition: background .15s ease-in-out;
+    transition: background .15s ease-in-out;
+}
+
+.slider [type="range"]::-webkit-slider-thumb:hover {
+    background-color: #7a00ff;
+}
+
+.slider [type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #f0932b;
+    border: #f9ca24 5px solid;
+    cursor: pointer;
+    -webkit-transition: background .15s ease-in-out;
+    transition: background .15s ease-in-out;
+}
+
+.slider [type="range"]::-moz-range-thumb:hover {
+    background: #f9ca24;
+}
+
+/* Remove border from focus styles */
+input::-moz-focus-inner, input::-moz-focus-outer {
+    border: 0;
+}
+
+#tools{
+    display: flex;
+    gap: 10px;
+}
+.tool > img{
+    opacity: .4;
+}
+
+.tool{
+    background-color: #310e57;
+    border: 3px solid #6127be;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.tool:hover{
+    background-color: #7a00ff;
+}
+#brush{
+    opacity: .8;
+    cursor:default;
 }
