@@ -201,7 +201,8 @@ input::-moz-focus-inner, input::-moz-focus-outer {
     gap: 10px;
 }
 .tool > img{
-    opacity: .4;
+    opacity: .2;
+    width: 100%;
 }
 
 .tool{
