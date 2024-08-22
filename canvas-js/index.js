@@ -2,9 +2,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
+ 
+    
     //define tamanho do canvas desenhavel
     canvas.width = 800;
     canvas.height = 500;
+
+    ctx.fillStyle = "white"
 
     //Informações do pincel
 
@@ -87,7 +91,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }else if(eraser.active && brush.lastPosition && brush.move){
             draw({inicial:{x:brush.lastPosition.x,y:brush.lastPosition.y}, final:{x:brush.position.x,y:brush.position.y}, color: eraser.color, width: brush.lineWidth});
         }else if(bucket.active){
-            floodFill({x:brush.lastPosition, y: brush.lastPosition.y}, hexToRgbaArr(brush.color) );
+            floodFill({x:brush.position.x, y: brush.position.y}, hexToRgbaArr(brush.color) );
+            bucket.active = false;
         }
         brush.lastPosition = {x:brush.position.x,y:brush.position.y};
         requestAnimationFrame(cicle);
@@ -173,17 +178,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
         activeTool = bucket;
     }
 
-    const hexToRgbaArr = (hex, alpha = 1)=>{
+    const hexToRgbaArr = (hex, alpha = 255)=>{
         const r = parseInt(hex.slice(1,3),16);
         const g = parseInt(hex.slice(3,5),16);
         const b = parseInt(hex.slice(5,7),16);
         return [r,g,b,alpha];
     }
     const floodFill = (pos, fillColor)=>{
+        console.log('asda')
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
         const targetColor = getColor(imageData, pos);
-
+        console.log(targetColor);
         if(!colorsMatch(targetColor, fillColor)){
             fillPixel(imageData, pos, targetColor, fillColor );
         }
@@ -210,17 +216,26 @@ document.addEventListener('DOMContentLoaded', ()=>{
         imageData.data[offSet+3] = color[3];
     }
 
-    const fillPixel = (imageData, pos, targetColor, fillColor)=>{
-        if(pos.x < canvas.width && pos.y < canvas.height && pos.x >= 0 && pos.y >= 0){
-            if(colorsMatch(targetColor,getColor(imageData, pos))){
+    const fillPixel = (imageData, startPos, targetColor, fillColor) => {
+        const stack = [startPos];
+        
+        while(stack.length > 0) {
+            pos = stack.pop();
+            
+            const lastFlag = true;
+
+            if(pos.x < 0 || pos.y < 0 || pos.x >= canvas.width || pos.y >= canvas.height) continue;
+    
+            if(colorsMatch(targetColor, getColor(imageData, pos))) {
                 setPixel(imageData, pos, fillColor);
-                fillPixel(imageData, {x:pos.x + 1 , y:pos.y}, targetColor, fillColor);
-                fillPixel(imageData, {x:pos.x, y:pos.y + 1}, targetColor, fillColor);
-                fillPixel(imageData, {x:pos.x - 1 , y:pos.y}, targetColor, fillColor);
-                fillPixel(imageData, {x:pos.x , y:pos.y - 1}, targetColor, fillColor);
+                stack.push({x: pos.x + 1, y: pos.y});
+                stack.push({x: pos.x - 1, y: pos.y});
+                stack.push({x: pos.x, y: pos.y + 1});
+                stack.push({x: pos.x, y: pos.y - 1});
             }
         }
-    }
+    };
+    
 
 })
 
