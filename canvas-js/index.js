@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', ()=>{
-
-
+    //Captura o DOM do canvas e cria o contexto 2d
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-    
 
     canvas.addEventListener('contextmenu', (event) => {
         // Verifique se o evento é especificamente o menu de contexto
@@ -14,128 +11,159 @@ document.addEventListener('DOMContentLoaded', ()=>{
         event.preventDefault(); // Desativa o menu de contexto do clique direito
     });
 
-    
-    // ctx.fillStyle = "white";
-    // ctx.fillRect(10, 10, 150, 100);
     //define tamanho do canvas desenhavel
     canvas.width = 800;
     canvas.height = 500;
+    //Pinta a area do canvas de branco
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height); 
 
-    ctx.fillStyle = "white"
-
-    //Informações do pincel
-
-    // LIMPAR O CODIGO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    let brush = {
-        active: false,
-        move: false,
+    //Definição das ferramentas e do cursor--------------------------------------------------------------------------------
+    let cursor = {
         position:{x: 0, y:0},
         lastPosition: null,
+    }
+    let brush = {
+        work: false,
         color: "#000000",
         lineWidth: 30
     }
+
     let eraser = {
-        active: false,
-        color: "#ffffff"
+        work: false,
+        color: "#ffffff",
+        lineWidth: 30
     }
     let bucket = {
-        active: false
+        work: false
     }
     let eyedropper = {
-        active: false
+        work: false
     }
 
+    //Menu de alteração de ferramenta------------------------------------------------------------------------------------
+    
+    //Define a ferramenta ativa pardrão como o brush
     let activeTool = brush;
 
-    //Desenha a linha
-    const draw = (line) => {
-        
+    //Seleciona os icones de ferramenta 
+    const brushTool = document.getElementById('brush');
+    const eraserTool = document.getElementById('eraser');
+    const bucketTool = document.getElementById('bucket');
+    const eyedropperTool = document.getElementById("eyedropper");
 
-    
-        ctx.lineWidth = line.width;
-        
-        // //Desenha circulo que parece uma linha para suavisar a linha verdadeira
-        // ctx.beginPath();
-        // ctx.arc(line.inicial.x, line.inicial.y, lineWidth/2 , 0 , 2* Math.PI)
-        // ctx.fillStyle = brush.color;
-        // ctx.fill();
-     
+    const tools = [brushTool, eraserTool,  bucketTool, eyedropperTool]
 
-        //desenha linha
-        ctx.beginPath();
-        ctx.moveTo(line.inicial.x, line.inicial.y);
-        ctx.lineTo(line.final.x, line.final.y);
-        ctx.strokeStyle = line.color;
-        ctx.lineCap = "round";
-        ctx.lineJoin = 'round';
-        ctx.stroke();
-        ctx.closePath();
+    //Altera a ferramenta selecionada na interface
+    const selectTool = (selectedTool)=>{
+        for(tool of tools){
+            const image = tool.querySelector('img');
+            if(tool == selectedTool){
+               image.style.opacity = ".8";
+            }else{
+                image.style.opacity = ".2";
+            }
+        }
     }
 
-    // const getActiveTool = ()=>{
-    //     for(a of tools){
-    //         if(a.dataset.active == "true"){
-    //             return a.id;
-    //         }
-    //     }
-    // }
+    //Ativa a ferramenta selecionada
+    const turnActive = (toolDOM, toolObj)=>{
+        selectTool(toolDOM);
+        activeTool = toolObj;
+    }
+    
+    //Adicionando eventos de ativar ferramenta
+    brushTool.onclick = ()=>{
+        turnActive(brushTool,brush);
+    }
+    eraserTool.onclick = ()=>{
+        turnActive(eraserTool,eraser);
+    }
+    bucketTool.onclick = ()=>{
+        turnActive(bucketTool,bucket);
+    }
+    eyedropperTool.onclick = ()=>{
+        turnActive(eyedropperTool,eyedropper);
+    }
 
-    //Toogle da flag de brush ativo
+    //Funções de movimento do mouse-------------------------------------------------------------------------------
+
     canvas.onmousedown = ()=> {
         //Se a ainda não foi salva em #previous-color salvar
         if(saveColorFlag == true){
             saveColor();
             saveColorFlag = false;
         }
-        activeTool.active = true;
+        activeTool.work = true;
     };
     canvas.onmouseup = ()=> activeTool.active = false;
 
     //captura as coordenadas do mouse
     canvas.onmousemove = (event)=>{
-        brush.position.x = event.offsetX;
-        brush.position.y = event.offsetY;
-        brush.move = true
+        cursor.position.x = event.offsetX;
+        cursor.position.y = event.offsetY;
     };
 
     canvas.addEventListener('mouseout', ()=>{
-        activeTool.active = false;
+        activeTool.work = false;
     })
 
-    //ciclo que captura o momento de chamar a funçao de desenho
+    //ciclo que captura o momento de chamar a funçao da ferrameta//--------------------------------------------------------
+    
     const cicle = ()=>{
-        //LIMPAR ISSSOOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if(brush.active && brush.lastPosition && brush.move){
-            draw({inicial:{x:brush.lastPosition.x,y:brush.lastPosition.y}, final:{x:brush.position.x,y:brush.position.y}, color: brush.color, width: brush.lineWidth});
-            brush.move = false;
-        }else if(eraser.active && brush.lastPosition && brush.move){
-            draw({inicial:{x:brush.lastPosition.x,y:brush.lastPosition.y}, final:{x:brush.position.x,y:brush.position.y}, color: eraser.color, width: brush.lineWidth});
-        }else if(bucket.active){
-            floodFill({x:brush.position.x, y: brush.position.y}, hexToRgbaArr(brush.color) );
-            bucket.active = false;
-        }else if(eyedropper.active){
-            copyColor({x:brush.position.x, y: brush.position.y});
-            selectTool(brushTool);
-            eyedropper.active = false;
-            activeTool = brush;
+        if(brush.work && cursor.lastPosition){
+            draw({
+                  inicial:{x:cursor.lastPosition.x, 
+                           y:cursor.lastPosition.y},
+                  final:{x:cursor.position.x, 
+                         y:cursor.position.y},
+                  color: brush.color,
+                  width: brush.lineWidth
+                });
+
         }
-        brush.lastPosition = {x:brush.position.x,y:brush.position.y};
+        else if(eraser.work && cursor.lastPosition){
+            draw({
+                  inicial:{x:cursor.lastPosition.x,
+                           y:cursor.lastPosition.y},
+                  final:{x:cursor.position.x,
+                         y:cursor.position.y},
+                  color: eraser.color, 
+                  //COLOCAR ERASER
+                  width: brush.lineWidth
+                });
+        
+        }else if(eyedropper.work){
+            copyColor({
+                        x:cursor.position.x,
+                        y:cursor.position.y
+                      });
+            turnActive(brushTool,brush);
+            eyedropper.work = false;
+            
+        }else if(bucket.work){
+            floodFill({
+                        x:cursor.position.x,
+                        y:cursor.position.y
+                      }, 
+                        hexToRgbaArr(brush.color) 
+                     );
+            bucket.work = false;
+
+        }
+        cursor.lastPosition = {x:cursor.position.x,y:cursor.position.y};
         requestAnimationFrame(cicle);
     }
     requestAnimationFrame(cicle);
 
+    //Configs do color picker------------------------------------------------------------------------------------
+    
+    //flag que diz se a cor deve ser salva no histórico
     let saveColorFlag = false;
-    //Altera o valor color do brush
-    // const colorPicker = document.querySelector('input[type=color]');
-    // colorPicker.onchange = ()=>{
-    //     saveColorFlag = true;
-    //     brush.color = colorPicker.value
-    // }
+
     const pickr = Pickr.create({
         el: '#color-picker',
-        theme: 'monolith', // Ou 'monolith', 'nano'
+        theme: 'monolith',
         default: '#000000',
         swatches: [
             '#f44336', '#e91e63', '#9c27b0', '#673ab7',
@@ -160,24 +188,25 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const colorPickerContainer = document.getElementById("color-picker-container");
     const pcrApp = document.querySelector(".pcr-app");
 
+    //Adiciona o eventListenner para alterar a cor quando o valor do picker for alterado
     pickr.on('change', (color) => {
-      
         saveColorFlag = true;
-
         color = color.toHEXA().toString();
         brush.color =  color;
         colorPicker.style.setProperty('--pcr-color', color);
     });
-
+    //Define a posiçõa do container de seleção de cores
     colorPicker.onclick = ()=>{
         colorPickerContainer.appendChild(pcrApp);
     }
+
+    //Salva a ultima cor colocada do canvas-----------------------------------------------------------------------------
 
     const previousColorsBtns = [...document.querySelectorAll('.prev-color')];
     const previousColorsArr = [];
 
     const saveColor = ()=>{
-        // Exlui a ultima cor se todos os botões estiverem preenchidos
+        // Exlui a ultima cor do array se todos os botões estiverem preenchidos
         if(previousColorsArr.length == 10){
             previousColorsArr.pop();
         }
@@ -202,10 +231,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
         } )  
     }
 
+    //Função que altera o tamanho do brush de acordo com o valor do slider--------------------------------------
     const sizeSlider = document.getElementById('size');
     sizeSlider.onchange = () =>{
         brush.lineWidth = sizeSlider.value;
     }
+
+
+    //*Problema ainda não resolvido* //
 
     // const opacitySlider = document.getElementById('opacity');
     // opacitySlider.onchange = () =>{
@@ -215,54 +248,22 @@ document.addEventListener('DOMContentLoaded', ()=>{
     //         brush.color += Number(opacitySlider.value).toString(16);
     // }
 
-    const brushTool = document.getElementById('brush');
-    const eraserTool = document.getElementById('eraser');
-    const bucketTool = document.getElementById('bucket');
-    const eyedropperTool = document.getElementById("eyedropper");
 
-    const tools = [brushTool, eraserTool,  bucketTool, eyedropperTool]
+     //Função de desenho que é usada pela eraser e brush------------------------------------------------------------
+     const draw = (line) => {
+        ctx.beginPath();
+        ctx.moveTo(line.inicial.x, line.inicial.y);
+        ctx.lineTo(line.final.x, line.final.y);
 
-    const selectTool = (selectedTool)=>{
-        for(tool of tools){
-            const image = tool.querySelector('img');
-            if(tool == selectedTool){
-               image.style.opacity = ".8";
-               tool.dataset.active = "true";
-            }else{
-                image.style.opacity = ".2";
-                tool.dataset.active = "false";
-            }
-        }
-    }
-    
-    brushTool.onclick = ()=>{
-        selectTool(brushTool);
-        activeTool.active = false;
-        activeTool = brush;
-    }
-    eraserTool.onclick = ()=>{
-        selectTool(eraserTool);
-        activeTool.active = false;
-        activeTool = eraser;
-    }
-    bucketTool.onclick = ()=>{
-        selectTool(bucketTool);
-        activeTool.active = false;
-        activeTool = bucket;
+        ctx.lineWidth = line.width;
+        ctx.strokeStyle = line.color;
+        ctx.lineCap = "round";
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        ctx.closePath();
     }
 
-    eyedropperTool.onclick = ()=>{
-        selectTool(eyedropperTool);
-        activeTool.active = false;
-        activeTool = eyedropper;
-    }
-
-    const hexToRgbaArr = (hex, alpha = 255)=>{
-        const r = parseInt(hex.slice(1,3),16);
-        const g = parseInt(hex.slice(3,5),16);
-        const b = parseInt(hex.slice(5,7),16);
-        return [r,g,b,alpha];
-    }
+    //Funções de preenchimento da ferramenta balde-------------------------------------------------------------------
     const floodFill = (pos, fillColor)=>{
         console.log('asda')
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -275,26 +276,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         ctx.putImageData(imageData, 0, 0);
     }
 
-    const getColor = (imageData, pos)=>{
-        //Lugar no imageData.data em que a cor começa
-        const offSet = (pos.y * imageData.width + pos.x) * 4;
-        //retorna array com o valor da cor
-        return imageData.data.slice(offSet, offSet+4);
-
-    }
-
-    const colorsMatch = (a,b)=>{
-        return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
-    }
-
-    const setPixel = (imageData,pos,color) => {
-        const offSet = (pos.y * imageData.width + pos.x) * 4;
-        imageData.data[offSet] = color[0];
-        imageData.data[offSet+1] = color[1];
-        imageData.data[offSet+2] = color[2];
-        imageData.data[offSet+3] = color[3];
-    }
-
+    //Função que aplica a lógica de preenchimento
     const fillPixel = (imageData, startPos, targetColor, fillColor) => {
         const stack = [startPos];
         
@@ -312,7 +294,41 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }
         }
     };
-    
+
+    //Funções Auxiliares do flood fill
+
+    //Converte a cor recebida no picker para ser compativel com imageData.data
+    const hexToRgbaArr = (hex, alpha = 255)=>{
+        const r = parseInt(hex.slice(1,3),16);
+        const g = parseInt(hex.slice(3,5),16);
+        const b = parseInt(hex.slice(5,7),16);
+        return [r,g,b,alpha];
+    }
+
+    //Função que devolve a cor de uma cordenada no canvas
+    const getColor = (imageData, pos)=>{
+        //Lugar no imageData.data em que a cor começa
+        const offSet = (pos.y * imageData.width + pos.x) * 4;
+        //retorna array com o valor da cor
+        return imageData.data.slice(offSet, offSet+4);
+
+    }
+
+    //Verifica se as cores são iguais
+    const colorsMatch = (a,b)=>{
+        return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
+    }
+
+    //Define a cor de um pixel do canvas
+    const setPixel = (imageData,pos,color) => {
+        const offSet = (pos.y * imageData.width + pos.x) * 4;
+        imageData.data[offSet] = color[0];
+        imageData.data[offSet+1] = color[1];
+        imageData.data[offSet+2] = color[2];
+        imageData.data[offSet+3] = color[3];
+    }
+
+   //Função de copia de cor do eyedropper------------------------------------------------------------------------------
    const copyColor = (pos)=>{
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let color = getColor(imageData,pos);
