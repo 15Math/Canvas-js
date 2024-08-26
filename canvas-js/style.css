@@ -11,6 +11,7 @@ body{
     flex-direction: column;
     align-items: center; 
     background-color: #6127be;
+    user-select: none;
 }
 #screen{
     width: 100wh;
@@ -23,6 +24,7 @@ body{
 #work-area{
     display: flex;
     position: relative;
+
 }
 
 #title {
@@ -46,7 +48,7 @@ body{
 
 #tools-area{
     height: 80px;
-    width: 100%;
+    width: 75%;
     background-color: rgba(29, 1, 43, 0.363);
     border-radius: 20px;
     margin-top: 20px;
@@ -54,7 +56,12 @@ body{
     align-items: center;
     padding: 20px;
 }
-
+#work-area > div{
+    display: flex;
+    
+    flex-direction: column;
+    align-items: center;
+}
 
  
   /* Personalize o seletor de cores */
@@ -110,7 +117,8 @@ input[type="color"]::-webkit-color-swatch:hover {
     border-radius: 3px;
 }
 #brush-ajustments {
-    height: 82.5%;
+    margin-top: 35px;
+    height: 70%;
     width: 80px;
     position: absolute;
     background-color: rgba(29, 1, 43, 0.363);
@@ -156,10 +164,9 @@ input[type="color"]::-webkit-color-swatch:hover {
     writing-mode: vertical-lr;
     direction: rtl;
     width: 16px;
-    height: 350px;
+    height: 300px;
     border-radius: 20px;
     background: #ffffff;
-
     outline: none;
     padding: 0;
     margin: 0;
@@ -263,4 +270,9 @@ input::-moz-focus-inner, input::-moz-focus-outer {
     opacity: .8;
 }
 
-
+#undo{
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}

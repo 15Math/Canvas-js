@@ -18,8 +18,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height); 
 
-    //Definição das ferramentas e do cursor--------------------------------------------------------------------------------
-    let cursor = {
+
+     //Definição das ferramentas e do cursor--------------------------------------------------------------------------------
+     let cursor = {
         position:{x: 0, y:0},
         lastPosition: null,
     }
@@ -28,7 +29,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         color: "#000000",
         lineWidth: 30
     }
-
     let eraser = {
         work: false,
         color: "#ffffff",
@@ -40,8 +40,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
     let eyedropper = {
         work: false
     }
-
-    //Menu de alteração de ferramenta------------------------------------------------------------------------------------
+    let undo = {
+        active: false,
+    }
+    let redo = {
+        active: false,
+    }
+    //Menu de ferramentas------------------------------------------------------------------------------------
     
     //Define a ferramenta ativa pardrão como o brush
     let activeTool = brush;
@@ -52,11 +57,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const bucketTool = document.getElementById('bucket');
     const eyedropperTool = document.getElementById("eyedropper");
 
-    const tools = [brushTool, eraserTool,  bucketTool, eyedropperTool]
+    const undoTool = document.getElementById("undo");
+    const redoTool = document.getElementById("redo");
+
+    const usableTools = [brushTool, eraserTool,  bucketTool, eyedropperTool]
 
     //Altera a ferramenta selecionada na interface
     const selectTool = (selectedTool)=>{
-        for(tool of tools){
+        for(tool of usableTools){
             const image = tool.querySelector('img');
             if(tool == selectedTool){
                image.style.opacity = ".8";
@@ -67,23 +75,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
 
     //Ativa a ferramenta selecionada
-    const turnActive = (toolDOM, toolObj)=>{
+    const turnActiveTool = (toolDOM, toolObj)=>{
         selectTool(toolDOM);
         activeTool = toolObj;
     }
     
     //Adicionando eventos de ativar ferramenta
     brushTool.onclick = ()=>{
-        turnActive(brushTool,brush);
+        turnActiveTool(brushTool,brush);
     }
     eraserTool.onclick = ()=>{
-        turnActive(eraserTool,eraser);
+        turnActiveTool(eraserTool,eraser);
     }
     bucketTool.onclick = ()=>{
-        turnActive(bucketTool,bucket);
+        turnActiveTool(bucketTool,bucket);
     }
     eyedropperTool.onclick = ()=>{
-        turnActive(eyedropperTool,eyedropper);
+        turnActiveTool(eyedropperTool,eyedropper);
     }
 
     //Funções de movimento do mouse-------------------------------------------------------------------------------
@@ -96,7 +104,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
         activeTool.work = true;
     };
-    canvas.onmouseup = ()=> activeTool.active = false;
+    canvas.onmouseup = ()=>{
+        activeTool.work = false;
+        saveHistory();
+        undo.active = true;
+        replaceLook(undoTool, undo);
+        replaceLook(redoTool, redo);
+    } 
 
     //captura as coordenadas do mouse
     canvas.onmousemove = (event)=>{
@@ -107,10 +121,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
     canvas.addEventListener('mouseout', ()=>{
         activeTool.work = false;
     })
-
-    //ciclo que captura o momento de chamar a funçao da ferrameta//--------------------------------------------------------
     
-    const cicle = ()=>{
+    //ciclos--------------------------------------------------------
+
+    //cilo que captura o uso de ferramenta
+    const toolCicle = ()=>{
         if(brush.work && cursor.lastPosition){
             draw({
                   inicial:{x:cursor.lastPosition.x, 
@@ -120,7 +135,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                   color: brush.color,
                   width: brush.lineWidth
                 });
-
+            saveCanvasFlag = true;
         }
         else if(eraser.work && cursor.lastPosition){
             draw({
@@ -132,15 +147,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
                   //COLOCAR ERASER
                   width: brush.lineWidth
                 });
+            saveCanvasFlag = true;
         
         }else if(eyedropper.work){
             copyColor({
                         x:cursor.position.x,
                         y:cursor.position.y
                       });
-            turnActive(brushTool,brush);
+            turnActiveTool(brushTool,brush);
             eyedropper.work = false;
-            
+            saveCanvasFlag = true;
         }else if(bucket.work){
             floodFill({
                         x:cursor.position.x,
@@ -149,13 +165,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         hexToRgbaArr(brush.color) 
                      );
             bucket.work = false;
-
+            saveCanvasFlag = true;
         }
         cursor.lastPosition = {x:cursor.position.x,y:cursor.position.y};
-        requestAnimationFrame(cicle);
-    }
-    requestAnimationFrame(cicle);
 
+        requestAnimationFrame(toolCicle);
+    }
+    requestAnimationFrame(toolCicle);
     //Configs do color picker------------------------------------------------------------------------------------
     
     //flag que diz se a cor deve ser salva no histórico
@@ -254,7 +270,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         ctx.beginPath();
         ctx.moveTo(line.inicial.x, line.inicial.y);
         ctx.lineTo(line.final.x, line.final.y);
-
         ctx.lineWidth = line.width;
         ctx.strokeStyle = line.color;
         ctx.lineCap = "round";
@@ -340,5 +355,75 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
         
    }
+
+    const undoFunc = () => {
+        historyPos --;
+        const imageData = canvasHistory[historyPos];
+        ctx.putImageData(imageData, 0, 0);
+        if(historyPos === 0){
+            undo.active = false;
+        }
+    }
+    const redoFunc = ()=>{
+        historyPos ++;
+        const imageData = canvasHistory[historyPos];
+        ctx.putImageData(imageData,0,0);
+        if(historyPos === canvasHistory.length - 1){
+            redo.active = false;
+        }
+    }
+    
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let canvasHistory = [imageData];
+    let historyPos = 0;
+
+    const saveHistory = ()=>{
+
+        if(historyPos != canvasHistory.length - 1){
+            canvasHistory.splice(historyPos + 1);
+            redo.active = false;
+        }
+
+        if(canvasHistory.length == 20){
+            canvasHistory.shift();
+        }else{
+            historyPos++;
+        }
+
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        canvasHistory.push(imageData);
+    
+    }
+
+    const replaceLook = (toolDOM, toolObj) =>{
+        const image = toolDOM.querySelector('img');
+        if(toolObj.active){
+            image.style.opacity = ".8";
+            toolDOM.style.cursor = "pointer"
+        }else{
+            image.style.opacity = ".2";
+            toolDOM.style.cursor = "default"
+        }
+    }
+    
+
+    undoTool.onclick = ()=>{
+        if(undo.active){
+            undoFunc();
+            redo.active = true;
+            replaceLook(undoTool, undo);
+            replaceLook(redoTool, redo);
+        }
+    }
+    redoTool.onclick = ()=>{
+        if(redo.active){
+            redoFunc();
+            undo.active = true;
+            replaceLook(redoTool, redo);
+            replaceLook(undoTool, undo);
+        }
+    }
+   
 })
 
