@@ -20,6 +20,7 @@ body{
     justify-content: center;
     align-items: center;
     position: absolute;
+    margin-top: 20px;
 }
 #work-area{
     display: flex;
