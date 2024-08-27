@@ -273,19 +273,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
     sizeSlider.onchange = () =>{
         brush.lineWidth = sizeSlider.value;
     }
-
-
-    //*Problema ainda não resolvido* //
-
-    // const opacitySlider = document.getElementById('opacity');
-    // opacitySlider.onchange = () =>{
-    //     if(brush.color.length > 7){
-    //         brush.color = brush.color.slice(0,7);
-    //     }
-    //         brush.color += Number(opacitySlider.value).toString(16);
-    // }
-
-
      //Função de desenho que é usada pela eraser e brush------------------------------------------------------------
      const draw = (line) => {
         ctx.beginPath();
