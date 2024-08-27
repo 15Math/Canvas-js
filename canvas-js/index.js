@@ -26,19 +26,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     let brush = {
         work: false,
+        active: false,
         color: "#000000",
         lineWidth: 30
     }
     let eraser = {
         work: false,
+        active: false,
         color: "#ffffff",
         lineWidth: 30
     }
     let bucket = {
-        work: false
+        work: false,
+        active: false
     }
     let eyedropper = {
-        work: false
+        work: false,
+        active: false
     }
     let undo = {
         active: false,
@@ -355,7 +359,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
         
    }
-
+   //Funções que alternam entre as telas salvas do histórico------------------------------------------------------------
     const undoFunc = () => {
         historyPos --;
         const imageData = canvasHistory[historyPos];
@@ -372,7 +376,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             redo.active = false;
         }
     }
-    
+    // Função que salva a tela no histórico-----------------------------------------------------------------------------------------
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let canvasHistory = [imageData];
     let historyPos = 0;
@@ -395,7 +399,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         canvasHistory.push(imageData);
     
     }
-
+    //troca o visual dos botões de undo e redo--------------------------------------------------------------------------
     const replaceLook = (toolDOM, toolObj) =>{
         const image = toolDOM.querySelector('img');
         if(toolObj.active){
@@ -407,7 +411,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         }
     }
     
-
+    //Adiciona o evento de click nos butôes de undo e redo-----------------------------------------------------------------------
     undoTool.onclick = ()=>{
         if(undo.active){
             undoFunc();
