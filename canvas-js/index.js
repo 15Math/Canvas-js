@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 
      //Definição das ferramentas e do cursor--------------------------------------------------------------------------------
-     let cursor = {
+    let cursor = {
         position:{x: 0, y:0},
         lastPosition: null,
     }
@@ -50,6 +50,19 @@ document.addEventListener('DOMContentLoaded', ()=>{
     let redo = {
         active: false,
     }
+
+
+    //troca o visual dos botões--------------------------------------------------------------------------
+    const replaceLook = (toolDOM, toolObj) =>{
+        const image = toolDOM.querySelector('img');
+        if(toolObj.active){
+            image.style.opacity = ".8";
+            toolDOM.style.cursor = "pointer"
+        }else{
+            image.style.opacity = ".2";
+            toolDOM.style.cursor = "default"
+        }
+    }
     //Menu de ferramentas------------------------------------------------------------------------------------
     
     //Define a ferramenta ativa pardrão como o brush
@@ -64,24 +77,28 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const undoTool = document.getElementById("undo");
     const redoTool = document.getElementById("redo");
 
-    const usableTools = [brushTool, eraserTool,  bucketTool, eyedropperTool]
+    const usableTools = [{dom:brushTool, obj:brush},
+                         {dom:eraserTool, obj:eraser},         
+                         {dom:bucketTool, obj:bucket},         
+                         {dom:eyedropperTool, obj:eyedropper}
+                        ];         
+    
+                        
 
     //Altera a ferramenta selecionada na interface
-    const selectTool = (selectedTool)=>{
+    const selectTool = ()=>{
         for(tool of usableTools){
-            const image = tool.querySelector('img');
-            if(tool == selectedTool){
-               image.style.opacity = ".8";
-            }else{
-                image.style.opacity = ".2";
-            }
+            replaceLook(tool.dom,tool.obj);
         }
     }
 
     //Ativa a ferramenta selecionada
-    const turnActiveTool = (toolDOM, toolObj)=>{
-        selectTool(toolDOM);
+    const turnActiveTool = (toolObj)=>{
+        activeTool.active = false;
+        toolObj.active = true;
         activeTool = toolObj;
+        selectTool();
+        
     }
     
     //Adicionando eventos de ativar ferramenta
@@ -399,17 +416,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         canvasHistory.push(imageData);
     
     }
-    //troca o visual dos botões de undo e redo--------------------------------------------------------------------------
-    const replaceLook = (toolDOM, toolObj) =>{
-        const image = toolDOM.querySelector('img');
-        if(toolObj.active){
-            image.style.opacity = ".8";
-            toolDOM.style.cursor = "pointer"
-        }else{
-            image.style.opacity = ".2";
-            toolDOM.style.cursor = "default"
-        }
-    }
+    
     
     //Adiciona o evento de click nos butôes de undo e redo-----------------------------------------------------------------------
     undoTool.onclick = ()=>{
