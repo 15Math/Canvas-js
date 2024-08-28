@@ -1,5 +1,6 @@
 # Canvas-js
 Evolução do projeto
+
 1-Interface básica feita, seletor de cores html adicionado e histórico de cores;
 ![Screenshot_1](https://github.com/user-attachments/assets/187943b5-3ea9-4568-a7fb-aaa0ea626fc1)
 2-Ferramentas, pincel, borracha e balde de tinta, slider de tamanho;
