@@ -13,7 +13,10 @@ Evolução do projeto
 
 ![Screenshot_2](https://github.com/user-attachments/assets/0dbce305-17b5-4d8b-8a25-bc688b915f58)
 
-4-Projeto finalizado com ferramenta de desfazer alterações
+4-Ferramenta de desfazer e refazer alterações
 
 ![Screenshot_5](https://github.com/user-attachments/assets/f8a92cfc-9737-4601-bd00-e1ee5b69c161)
+
+5-Finalização do projeto com alteração na interface
+
 ![Screenshot_4](https://github.com/user-attachments/assets/4c40bd7e-f9bc-45e3-aec4-948748c8d7e3)
