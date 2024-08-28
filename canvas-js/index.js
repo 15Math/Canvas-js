@@ -102,18 +102,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     
     //Adicionando eventos de ativar ferramenta
-    brushTool.onclick = ()=>{
-        turnActiveTool(brushTool,brush);
+    // Função para adicionar o evento de clique a todas as ferramentas
+    const addToolEvents = () => {
+        usableTools.forEach(tool => {
+            tool.dom.onclick = () => {
+                turnActiveTool(tool.obj);
+            };
+        });
     }
-    eraserTool.onclick = ()=>{
-        turnActiveTool(eraserTool,eraser);
-    }
-    bucketTool.onclick = ()=>{
-        turnActiveTool(bucketTool,bucket);
-    }
-    eyedropperTool.onclick = ()=>{
-        turnActiveTool(eyedropperTool,eyedropper);
-    }
+
+    // Inicializa os eventos das ferramentas
+    addToolEvents();
 
     //Funções de movimento do mouse-------------------------------------------------------------------------------
 
@@ -175,7 +174,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
                         x:cursor.position.x,
                         y:cursor.position.y
                       });
-            turnActiveTool(brushTool,brush);
+            turnActiveTool(brush);
             eyedropper.work = false;
             saveCanvasFlag = true;
         }else if(bucket.work){
