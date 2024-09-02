@@ -1,17 +1,25 @@
 # Canvas-js
 Funcionalidades:
 
-  -Ferramentas práticas:
+  - Ferramentas práticas:
     >Pincel
+    
     >Borracha
+    
     >Balde de tinta
+    
     
   - Ferramentas auxiliares
     >Seletor de cores
+    
     >Histórico de cores
+    
     >Conta gotas
+    
     >Slider de tamanho
+    
     >Histórico de alterações navegável
+    
 
 Evolução do projeto:
 
