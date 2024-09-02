@@ -1,5 +1,19 @@
 # Canvas-js
-Evolução do projeto
+Funcionalidades:
+
+  -Ferramentas práticas:
+    >Pincel
+    >Borracha
+    >Balde de tinta
+    
+  - Ferramentas auxiliares
+    >Seletor de cores
+    >Histórico de cores
+    >Conta gotas
+    >Slider de tamanho
+    >Histórico de alterações navegável
+
+Evolução do projeto:
 
 1-Interface básica feita, seletor de cores html adicionado e histórico de cores;
 
